@@ -6,11 +6,12 @@
 [Pp]ackages/
 [Bb]uild/
 *.sln.ide/
+.vs
 
 # Build related
 tools/**
 !tools/packages.config
-BuildArtifacts/
+artifacts/
 
 # mstest test results
 TestResults

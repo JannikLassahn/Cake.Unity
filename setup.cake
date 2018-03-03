@@ -1,22 +1,54 @@
-#load "nuget:https://www.myget.org/F/cake-contrib/api/v2?package=Cake.Recipe&prerelease"
+var target = Argument("target", "Default");
+var configuration = Argument("configuration", "Release");
 
-Environment.SetVariableNames();
+var solution = "./src/Cake.Unity.sln";
+var project = "./src/Cake.Unity/Cake.Unity.csproj";
+var test = "./src/Cake.Unity.Tests/Cake.Unity.Tests.csproj";
 
-BuildParameters.SetParameters(context: Context, 
-                            buildSystem: BuildSystem,
-                            sourceDirectoryPath: "./src",
-                            title: "Cake.Unity",
-                            repositoryOwner: "cake-contrib",
-                            repositoryName: "Cake.Unity",
-                            appVeyorAccountName: "cakecontrib");
+Task("Clean")
+    .Does(() =>
+    {
+        DotNetCoreClean(solution);
+        DeleteFiles(GetFiles("./artifacts/*.nupkg"));
+    });
 
-BuildParameters.PrintParameters(Context);
+Task("Restore")
+    .IsDependentOn("Clean")
+    .Does(() =>
+    {
+        DotNetCoreRestore(solution);
+    });
 
-ToolSettings.SetToolSettings(context: Context,
-                            dupFinderExcludePattern: new string[] { 
-                                BuildParameters.RootDirectoryPath + "/src/Cake.Unity.Tests/**/*.cs" },
-                            testCoverageFilter: "+[*]* -[xunit.*]* -[Cake.Core]* -[Cake.Testing]* -[*.Tests]* ",
-                            testCoverageExcludeByAttribute: "*.ExcludeFromCodeCoverage*",
-                            testCoverageExcludeByFile: "*/*Designer.cs;*/*.g.cs;*/*.g.i.cs");
+Task("Build")
+    .IsDependentOn("Restore")
+    .Does(() =>
+    {
+        DotNetCoreBuild(solution, new DotNetCoreBuildSettings { Configuration = configuration });
+    });
 
-Build.Run();
+Task("Test")
+    .IsDependentOn("Build")
+    .Does(() => 
+    {
+        DotNetCoreTest(test, new DotNetCoreTestSettings()
+        {
+            Configuration = configuration,
+            NoBuild = true
+        });
+    });
+
+Task("Package")
+    .IsDependentOn("Test")
+    .Does(() =>
+    {
+        DotNetCorePack(project, new DotNetCorePackSettings 
+        {
+            Configuration = configuration,
+            OutputDirectory = "./artifacts/"
+        });
+    });
+
+Task("Default")
+    .IsDependentOn("Build");
+
+RunTarget(target);
