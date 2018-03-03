@@ -2,6 +2,7 @@
 using Cake.Core.Annotations;
 using Cake.Core.IO;
 using Cake.Unity.Actions;
+using System.Collections.Generic;
 
 namespace Cake.Unity
 {
@@ -38,6 +39,16 @@ namespace Cake.Unity
             var tool = new UnityRunner(context);
             var action = new UnityImportPackageAction(packagePath);
             tool.Run(context, projectPath, action);
+        }
+
+        [CakeMethodAlias]
+        public static void UnityTest(this ICakeContext context, DirectoryPath projectPath, UnityTestConfiguration configuration = null)
+        {
+            var tool = new UnityRunner(context);
+            var action = new UnityTestAction(configuration);
+
+            // The Unity Test Runner won't run when '-quit' is set.
+            tool.Run(context, projectPath, action, false);
         }
     }
 }

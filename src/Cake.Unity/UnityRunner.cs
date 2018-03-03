@@ -50,7 +50,7 @@ namespace Cake.Unity
             yield return "Unity.exe";
         }
 
-        public void Run(ICakeContext context, DirectoryPath projectPath, UnityAction action)
+        public void Run(ICakeContext context, DirectoryPath projectPath, UnityAction action, bool quit = true)
         {
             if (context == null)
             {
@@ -82,7 +82,8 @@ namespace Cake.Unity
             arguments.Append("-batchmode");
 
             // Quit the Unity Editor after other commands have finished executing.
-            arguments.Append("-quit");
+            if(quit)
+                arguments.Append("-quit");
 
             // Open the project at the given path.
             arguments.Append("-projectPath");

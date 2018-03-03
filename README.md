@@ -27,6 +27,19 @@ Task("Unity")
     
     // Import .unitypackage
     UnityExportPackage(projectPath, "Import.unitypackage");
+
+    // Test (Editor-tests only)
+    UnityTest(projectPath);
+    // OR with configuration
+    UnityTest(projectPath, new UnityTestConfiguration
+    {
+        TestResultsFile = "./TestResults.xml",
+        TestPlatform = UnityTestPlatform.PlayMode,
+
+        Categories = new string[] { "LongRunningTests", "DefaultTests" },  // NOT supported in Unity through command line 
+        Tests = new string[] { "SpaceshipTest", "AsteroidsTest" },         // NOT supported in Unity through command line
+    });
+
 });
 
 RunTarget("Unity");
