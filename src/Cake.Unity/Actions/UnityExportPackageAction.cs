@@ -25,9 +25,17 @@ namespace Cake.Unity.Actions
             arguments.Append("-exportPackage");
             foreach (var exportAssetPath in _exportAssetPaths)
             {
-                arguments.AppendQuoted(exportAssetPath.MakeAbsolute(context.Environment).FullPath);
+                arguments.AppendQuoted(GetRelativeAssetsPath(exportAssetPath));
             }
             arguments.AppendQuoted(_exportFileName.MakeAbsolute(context.Environment).FullPath);
+        }
+
+        private string GetRelativeAssetsPath(DirectoryPath directory)
+        {
+            if (directory.FullPath.StartsWith("Assets"))
+                return directory.FullPath;
+            else
+                return directory.FullPath.Substring(directory.FullPath.LastIndexOf("Assets"));
         }
     }
 }

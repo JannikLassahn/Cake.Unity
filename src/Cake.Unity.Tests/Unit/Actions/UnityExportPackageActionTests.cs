@@ -8,7 +8,7 @@ namespace Cake.Unity.Tests.Unit.Actions
     public sealed class UnityExportPackageActionTests
     {
         [Fact]
-        public void Should_Pass_Export_Assets()
+        public void Should_Pass_Export_Assets_Relative()
         {
             // Given
             var context = UnityActionFixture.CreateContext();
@@ -19,7 +19,7 @@ namespace Cake.Unity.Tests.Unit.Actions
             platform.BuildArguments(context, builder);
 
             // Then
-            Assert.Equal("-exportPackage \"C:/Project/Assets/ToExport\" \"C:/Result.unitypackage\"", builder.Render());
+            Assert.Equal("-exportPackage \"Assets/ToExport\" \"C:/Result.unitypackage\"", builder.Render());
         }
 
         [Fact]
@@ -34,7 +34,7 @@ namespace Cake.Unity.Tests.Unit.Actions
             platform.BuildArguments(context, builder);
 
             // Then
-            Assert.Equal("-exportPackage \"/Working/Assets/ToExport\" \"/Working/Result.unitypackage\"", builder.Render());
+            Assert.Equal("-exportPackage \"Assets/ToExport\" \"/Working/Result.unitypackage\"", builder.Render());
         }
     }
 }
